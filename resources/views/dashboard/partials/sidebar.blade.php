@@ -8,7 +8,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="{{route('penjemputan-harian.index')}}">
                 <i class="mdi mdi-truck-delivery menu-icon"></i>
                 <span class="menu-title">Data Penjemputan</span>
             </a>
@@ -17,8 +17,15 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{{route('siswa.index')}}">
-                <i class="mdi mdi-truck-delivery menu-icon"></i>
+                <i class="mdi mdi-account-group menu-icon"></i>
                 <span class="menu-title">Data Siswa</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('qrCodeScan')}}">
+                <i class="mdi mdi-qrcode-scan menu-icon"></i>
+                <span class="menu-title">Qr Code Reader</span>
             </a>
         </li>
 

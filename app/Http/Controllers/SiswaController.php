@@ -41,12 +41,12 @@ class SiswaController extends Controller
         //     'Content-Disposition' => 'attachment; filename="qrcode.png"',
         // ]);
 
-        $data = $siswa->nama_siswa.' - '.$siswa->kelas;
-        $name = $siswa->nama_siswa.' - '.$siswa->kelas;
+        // $data = $siswa->nis;
+        $name = $siswa->nis;
 
 
-        return response()->streamDownload(function () use ($data) {
-            echo file_get_contents('https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='.$data);
+        return response()->streamDownload(function () use ($name) {
+            echo file_get_contents('https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='.$name);
         }, $name.'.png');
 
         // dd($base64Svg);

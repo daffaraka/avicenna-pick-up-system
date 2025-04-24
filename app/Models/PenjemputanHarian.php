@@ -13,7 +13,6 @@ class PenjemputanHarian extends Model
         'jam_dijemput',
         'confirm_pic_at',
         'confirm_satpam_at',
-
     ];
 
 

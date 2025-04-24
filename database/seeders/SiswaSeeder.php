@@ -15,7 +15,8 @@ class SiswaSeeder extends Seeder
     {
         for ($i = 1; $i <= 10; $i++) {
             Siswa::create([
-                'nama_siswa' => fake()->name(),
+                'nis' => fake()->unique()->numberBetween(1000000000, 9999999999),
+                'nama_siswa' => fake()->unique()->name(),
                 'kelas' => fake()->randomElement(['X', 'XI', 'XII']),
                 'foto' => fake()->imageUrl()
             ]);

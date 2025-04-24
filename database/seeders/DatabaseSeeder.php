@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        $this->call(SiswaSeeder::class);
+        $this->call([
+            SiswaSeeder::class,
+            PenjemputanSeeder::class
+        ]);
     }
 }
