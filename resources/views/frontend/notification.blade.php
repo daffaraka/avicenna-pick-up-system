@@ -74,7 +74,7 @@
     var channel = pusher.subscribe('apus-notification');
 
     // Bind to the event
-    channel.bind('notifikasi', function(data) {
+    channel.bind('notifikasi-penjemputan', function(data) {
         console.log('Received data:', data); // Debugging line
 
         // Display Toastr notification with icons and inline content

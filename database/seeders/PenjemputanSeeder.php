@@ -21,17 +21,16 @@ class PenjemputanSeeder extends Seeder
         $siswa = Siswa::pluck('id')->toArray();
 
 
-        for ($i = 0; $i <10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             PenjemputanHarian::create([
                 'pic_id' => $pic[array_rand($pic)],
                 'siswa_id' => $siswa[$i],
-                'nama_penjemput' => 'John Doe',
-                'confirm_pic_at' => Carbon::now()->addMinutes(10),
-                'confirm_satpam_at' =>  Carbon::now()->addMinutes(10),
-                // 'waktu_dijemput' => now(),
+                'nama_penjemput' => fake()->name(),
+                // 'waktu_dijemput' => rand(0, 1) ? Carbon::now()->addMinutes(rand(1, 10)) : null,
+                // 'confirm_pic_at' => rand(0, 1) ? Carbon::now()->addMinutes(rand(1, 10)) : null,
+                // 'confirm_satpam_at' => rand(0, 1) ? Carbon::now()->addMinutes(rand(1, 10)) : null,
 
             ]);
         }
-
     }
 }

@@ -39,7 +39,7 @@ class TestNotification implements ShouldBroadcastNow
      */
     public function broadcastAs()
     {
-        return 'notifikasi';
+        return 'notifikasi-penjemputan';
     }
 
     /**

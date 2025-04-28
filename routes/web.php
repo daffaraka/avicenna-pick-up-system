@@ -8,7 +8,7 @@ use App\Http\Controllers\PenjemputanHarianController;
 use App\Http\Controllers\SiswaController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('dashboard');
 });
 
 
@@ -30,5 +30,7 @@ Route::post('scan-qr-code',[QRCodeGenerator::class,'scanQrCode'])->name('scan.sc
 
 
 Route::resource('penjemputan-harian', PenjemputanHarianController::class);
+Route::get('penjemputan-harian/satpam-konfirmasi', [PenjemputanHarianController::class, 'satpamKonfirmasi'])->name('penjemputan-harian.satpamKonfirmasi');
+Route::get('penjemputan-harian/guru-konfirmasi', [PenjemputanHarianController::class, 'guruKonfirmasi'])->name('penjemputan-harian.guruKonfirmasi');
 
 Route::resource('siswa', SiswaController::class);

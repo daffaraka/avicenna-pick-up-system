@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
+use App\Events\TestNotification;
 use App\Models\PenjemputanHarian;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -54,6 +55,9 @@ class QRCodeGenerator extends Controller
             $penjemputan->save();
         }
 
+        event(new TestNotification([
+            'nama_siswa' =>'Penjemput atas nama '. $penjemputan->siswa->nama_siswa. ' Sudah Datang',
+        ]));
 
 
 
