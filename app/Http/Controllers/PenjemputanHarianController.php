@@ -15,34 +15,72 @@ class PenjemputanHarianController extends Controller
     public function index()
     {
 
-        // if (Auth::user()->role == 'Admin' && Auth::user()->role == 'Satpam') {
-        //     $siswaDijemput = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
-        //         ->with('siswa')
-        //         ->get()
-        //         ->groupBy('siswa.kelas')
-        //         ->sortKeys();
-        // $penjemputan = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))->with('siswa')->get();
 
-        // } else {
-        //     $siswaDijemput = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
+        if (Auth::user()->role == 'admin' || Auth::user()->role == 'satpam') {
+            $siswaDijemput = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
+                ->with('siswa')
+                ->get()
+                ->groupBy('siswa.kelas')
+                ->sortKeys();
+            $penjemputan = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
+                ->with('siswa')
+                ->orderBy('waktu_dijemput', 'desc')
+                ->get();
+        } else {
+            $siswaDijemput = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
+                ->with('siswa', function ($siswa) {
+                    $siswa->where('kelas', Auth::user()->pic_kelas);
+                })
+
+                ->get()
+                ->groupBy('siswa.kelas')
+                ->sortKeys();
+
+            $penjemputan = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
+                ->with('siswa')
+                ->whereHas('siswa', function ($siswa) {
+                    $siswa->where('kelas', Auth::user()->pic_kelas);
+                })
+                ->orderBy('waktu_dijemput', 'desc')
+                ->get();
+        }
+
+
+
+
+        // dd($penjemputan);
+
+        // $siswaDijemput = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
         //     ->with('siswa')
-        //     ->where('kelas', Auth::user()->pic_kelas)
         //     ->get()
         //     ->groupBy('siswa.kelas')
         //     ->sortKeys();
 
-        // $penjemputan = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))->with('siswa')->get();
+        // $penjemputan = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
+        //     ->with('siswa')
+        //     ->orderBy('waktu_dijemput', 'desc')
+        //     ->get();
+        return view('dashboard.penjemputan-harian.penjemputan-index', compact('penjemputan', 'siswaDijemput'));
+    }
 
-        // }
+
+    public function penjemputanKelas($kelas)
+    {
 
         $siswaDijemput = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
-            ->with('siswa')
+            ->with('siswa', function ($siswa) {
+                $siswa->where('kelas', Auth::user()->pic_kelas);
+            })
+
             ->get()
             ->groupBy('siswa.kelas')
             ->sortKeys();
 
         $penjemputan = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
             ->with('siswa')
+            ->whereHas('siswa', function ($siswa) {
+                $siswa->where('kelas', Auth::user()->pic_kelas);
+            })
             ->orderBy('waktu_dijemput', 'desc')
             ->get();
         return view('dashboard.penjemputan-harian.penjemputan-index', compact('penjemputan', 'siswaDijemput'));
@@ -101,7 +139,7 @@ class PenjemputanHarianController extends Controller
     {
 
         event(new TestNotification([
-            'nama_siswa' =>'Penjemput atas nama '. $penjemputanHarian->post. ' Sudah Datang',
+            'nama_siswa' => 'Penjemput atas nama ' . $penjemputanHarian->post . ' Sudah Datang',
         ]));
 
 

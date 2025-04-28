@@ -8,6 +8,7 @@
         </div>
         <div class="card-body">
 
+            <div class="h3">Data siswa dijemput kelas {{Auth::user()->pic_kelas}}</div>
             <div class="d-flex gap-2 mb-3 px-3">
                 @foreach ($siswaDijemput as $key => $item)
                     {{-- <div class="col-1"> --}}

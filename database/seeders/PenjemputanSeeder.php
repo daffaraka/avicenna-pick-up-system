@@ -21,7 +21,7 @@ class PenjemputanSeeder extends Seeder
         $siswa = Siswa::pluck('id')->toArray();
 
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 30; $i++) {
             PenjemputanHarian::create([
                 'pic_id' => $pic[array_rand($pic)],
                 'siswa_id' => $siswa[$i],
