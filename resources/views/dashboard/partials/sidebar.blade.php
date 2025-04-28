@@ -19,35 +19,47 @@
 
             <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu px-3 ">
-                    <li class="nav-item"> <a class="nav-link" href="{{route('penjemputan-harian.kelas',['kelas' => Auth::user()->pic_kelas])}}">Penjemputan Hari Ini</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{route('penjemputan-harian.index')}}">Rekap</a></li>
-                    </li>
-                </ul>
-            </div>
+                    @if (Auth::user()->role == 'guru')
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('penjemputan-harian.kelas', ['kelas' => Auth::user()->pic_kelas]) }}">Penjemputan
+                                Hari Ini</a></li>
+                    @endif
+                    @if (Auth::user()->role != 'guru')
+                        <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('penjemputan-harian.index') }}">Penjemputan
+                                Hari Ini</a></li>
+
+                        {{-- <li class="nav-item"> <a class="nav-link"
+                                href="{{ route('penjemputan-harian.index') }}">Rekap</a> --}}
+                    @endif
         </li>
-
-
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('siswa.index') }}">
-                <i class="mdi mdi-account-group menu-icon"></i>
-                <span class="menu-title">Data Siswa</span>
-            </a>
         </li>
+    </ul>
+    </div>
+    </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('qrCodeScan') }}">
-                <i class="mdi mdi-qrcode-scan menu-icon"></i>
-                <span class="menu-title">Qr Code Reader</span>
-            </a>
-        </li>
 
-        {{-- <li class="nav-item">
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('siswa.index') }}">
+            <i class="mdi mdi-account-group menu-icon"></i>
+            <span class="menu-title">Data Siswa</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('qrCodeScan') }}">
+            <i class="mdi mdi-qrcode-scan menu-icon"></i>
+            <span class="menu-title">Qr Code Reader</span>
+        </a>
+    </li>
+
+    {{-- <li class="nav-item">
             <a class="nav-link" href="index.html">
                 <i class="icon-grid menu-icon"></i>
                 <span class="menu-title">Statistik Penjemputan</span>
             </a>
         </li> --}}
-        {{-- <li class="nav-item">
+    {{-- <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
                 aria-controls="ui-basic">
                 <i class="icon-layout menu-icon"></i>

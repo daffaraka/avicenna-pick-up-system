@@ -40,7 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::post('scan-qr-code',[QRCodeGenerator::class,'scanQrCode'])->name('scan.scanQrCode');
 
 
-    Route::resource('penjemputan-harian', PenjemputanHarianController::class);
+    Route::resource('penjemputan-harian', PenjemputanHarianController::class)->except('show');
+    Route::post('penjemput-datang',[PenjemputanHarianController::class,'penjemputDatang'])->name('penjemputDatang');
+
     Route::get('penjemputan-harian/satpam-konfirmasi', [PenjemputanHarianController::class, 'satpamKonfirmasi'])->name('penjemputan-harian.satpamKonfirmasi');
     Route::get('penjemputan-harian/guru-konfirmasi', [PenjemputanHarianController::class, 'guruKonfirmasi'])->name('penjemputan-harian.guruKonfirmasi');
     Route::get('penjemputan-harian/{kelas}', [PenjemputanHarianController::class,'penjemputanKelas'])->name('penjemputan-harian.kelas');

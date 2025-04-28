@@ -68,10 +68,10 @@ class PenjemputanHarianController extends Controller
     {
 
         $siswaDijemput = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
-            ->with('siswa', function ($siswa) {
+            ->with('siswa')
+            ->whereHas('siswa', function ($siswa) {
                 $siswa->where('kelas', Auth::user()->pic_kelas);
             })
-
             ->get()
             ->groupBy('siswa.kelas')
             ->sortKeys();
@@ -83,6 +83,9 @@ class PenjemputanHarianController extends Controller
             })
             ->orderBy('waktu_dijemput', 'desc')
             ->get();
+
+
+            // dd($siswaDijemput);
         return view('dashboard.penjemputan-harian.penjemputan-index', compact('penjemputan', 'siswaDijemput'));
     }
 
@@ -135,20 +138,28 @@ class PenjemputanHarianController extends Controller
     }
 
 
-    public function penjemputDatang(PenjemputanHarian $penjemputanHarian)
+    public function penjemputDatang(Request $request)
     {
 
+        $penjemputan = PenjemputanHarian::whereHas('siswa', function ($query) use ($request) {
+            $query->where('nis', $request->data);
+        })
+            ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
+            ->first();
+
         event(new TestNotification([
-            'nama_siswa' => 'Penjemput atas nama ' . $penjemputanHarian->post . ' Sudah Datang',
+            'notifikasi' => 'Penjemput atas nama ' . $penjemputan->siswa->nama . ' Sudah Datang',
+            'kelas' => $penjemputan->siswa->kelas
         ]));
 
 
-        $penjemputanHarian->update([
+        $penjemputan->update([
             'waktu_dijemput' => Carbon::now()
         ]);
         return response()->json([
             'success' => true,
-            'data' => $penjemputanHarian->siswa->nama_siswa,
+            'data' => $penjemputan->siswa->nama_siswa,
+            'kelas' => $penjemputan->siswa->kelas,
             'time' => Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y')
         ]);
     }

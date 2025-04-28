@@ -70,7 +70,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js" type="text/javascript"></script>
+    <script src="{{asset('assets/js/html5-qrcode.min.js')}}" type="text/javascript"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
     <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>

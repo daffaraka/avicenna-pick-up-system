@@ -31,7 +31,7 @@
             scannerResult = decodedText;
 
             $.ajax({
-                url: '/scan-qr-code',
+                url: '/penjemput-datang',
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',

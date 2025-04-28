@@ -8,12 +8,13 @@
         </div>
         <div class="card-body">
 
-            <div class="h3">Data siswa dijemput kelas {{Auth::user()->pic_kelas}}</div>
+            <div class="px-3">
+                <div class="h3">Data siswa dijemput kelas {{ Auth::user()->pic_kelas }}</div>
+
+            </div>
             <div class="d-flex gap-2 mb-3 px-3">
                 @foreach ($siswaDijemput as $key => $item)
-                    {{-- <div class="col-1"> --}}
                     <button type="button" class="btn btn-block btn-outline-primary fw-bold">{{ $key }}</button>
-                    {{-- </div> --}}
                 @endforeach
             </div>
             <div class="table-responsive px-3">
@@ -81,61 +82,62 @@
 @endsection
 
 @push('scripts')
-<script>
-    Pusher.logToConsole = true;
-
-    // Initialize Pusher
-    var pusher = new Pusher('76a2a7e56f5027ca66a4', {
-        cluster: 'mt1'
-    });
-
-    // Subscribe to the channel
-    var channel = pusher.subscribe('apus-notification');
+    <script>
+        var picKelas = @json(Auth::user()->pic_kelas);
 
 
+        console.log('cekkkkkkk ' + picKelas);
+        Pusher.logToConsole = true;
 
-    channel.bind('notifikasi-penjemputan', function(data) {
-        console.log('Received data:', data); // Debugging line
+        // Initialize Pusher
+        var pusher = new Pusher('76a2a7e56f5027ca66a4', {
+            cluster: 'mt1'
+        });
 
-        // Display Toastr notification with icons and inline content
-        if (data) {
+        // Subscribe to the channel
+        var channel = pusher.subscribe('apus-notification');
 
-            // alert(`New Post Notification:  ${data.post} `);
 
-            // alert(`New Post Notification:  ${data.post}  ${data.desc}`);
-            swal({
-                title: 'Penjemputan Terbaru',
-                content: $('<div>')
-                    .addClass('notification-content')
-                    .append(`<span style="margin-left: 20px;">${data.nama_siswa}</span>`)[0],
-                icon: 'info',
-                button: {
-                    text: 'Close',
-                    closeModal: true
-                },
-                className: 'swal-toast',
-                timer: null // Toast persists until closed
-            });
 
-            // Update the notification container without reloading the page
-            $('#notification-container').html('');
-            $.each(data.posts, function(index, post) {
-                $('#notification-container').append(
-                    `<button class="btn btn-primary">${post.nama_siswa}</button>`);
-            });
-        } else {
-            console.error('Invalid data received:', data);
-        }
-    });
+        channel.bind('notifikasi-penjemputan', function(data) {
+            console.log('Received data:', data);
+            console.log('Kelas : ' + data.kelas);
+            console.log('picKelas user : ' + picKelas);
 
-    // Debugging line
-    pusher.connection.bind('connected', function() {
-        console.log('Pusher connected');
-    });
+            if (data && data.kelas === picKelas) {
+                swal({
+                    title: 'Penjemputan Terbaru',
+                    content: $('<div>')
+                        .addClass('notification-content')
+                        .append(`<span style="margin-left: 20px;">${data.notifikasi}</span>`)[0],
+                    icon: 'info',
+                    button: {
+                        text: 'Close',
+                        closeModal: true
+                    },
+                    className: 'swal-toast',
+                    timer: null
+                });
 
-    $(document).ready(function() {
-        $('.table').DataTable();
-    });
-</script>
+                $('#notification-container').html('');
+                $.each(data.posts, function(index, post) {
+                    $('#notification-container').append(
+                        `<button class="btn btn-primary">${post.nama_siswa}</button>`
+                    );
+                });
+            } else {
+                console.log('Bukan kelas saya, alert tidak ditampilkan.');
+            }
+        });
 
+
+        // Debugging line
+        pusher.connection.bind('connected', function() {
+            console.log('Pusher connected');
+        });
+
+        $(document).ready(function() {
+            $('.table').DataTable();
+        });
+    </script>
 @endpush
