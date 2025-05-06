@@ -29,25 +29,25 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
-            'password' => bcrypt('admin'),
+            'password' => bcrypt('password'),
             'role' => 'admin',
         ]);
         User::factory()->create([
             'name' => 'Satpam 1',
             'email' => 'satpam1@satpam.com',
-            'password' => bcrypt('satpam'),
+            'password' => bcrypt('password'),
             'role' => 'satpam',
         ]);
         User::factory()->create([
             'name' => 'Satpam 2',
             'email' => 'satpam2@satpam.com',
-            'password' => bcrypt('satpam'),
+            'password' => bcrypt('password'),
             'role' => 'satpam',
         ]);
         User::factory()->create([
             'name' => 'Satpam 3',
             'email' => 'satpam3@satpam.com',
-            'password' => bcrypt('satpam'),
+            'password' => bcrypt('password'),
             'role' => 'satpam',
         ]);
         shuffle($kelas);

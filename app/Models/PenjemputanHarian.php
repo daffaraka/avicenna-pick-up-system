@@ -10,7 +10,7 @@ class PenjemputanHarian extends Model
         'pic_id',
         'siswa_id',
         'nama_penjemput',
-        'jam_dijemput',
+        'waktu_dijemput',
         'confirm_pic_at',
         'confirm_satpam_at',
     ];

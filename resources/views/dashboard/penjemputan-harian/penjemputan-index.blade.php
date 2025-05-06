@@ -8,9 +8,10 @@
         </div>
         <div class="card-body">
 
-            <div class="px-3">
+            <div class="d-flex justify-content-between px-3">
                 <div class="h3">Data siswa dijemput kelas {{ Auth::user()->pic_kelas }}</div>
 
+                <a href="{{route('penjemputan-harian.generateSiswaHariIni')}}" class="btn btn-info fw-bold text-white">Generate Hari Ini</a>
             </div>
             <div class="d-flex gap-2 mb-3 px-3">
                 @foreach ($siswaDijemput as $key => $item)
@@ -26,7 +27,7 @@
                             <th>Kelas</th>
                             {{-- <th>Nama Penjemput</th> --}}
                             <th>Jam Penjemput Datang</th>
-                            <th>Confirm PIC At</th>
+                            <th>Confirm Wali Kelas At</th>
                             <th>Confirm Satpam At</th>
                             <th>Action</th>
                         </tr>
@@ -53,17 +54,17 @@
                                         @switch($penjemput)
                                             @case($penjemput->waktu_dijemput == null)
                                                 <a href="" class="btn btn-primary fw-bold"><i class="ti-user"></i> Confirm
-                                                    Kedatangan</a>
+                                                    Kedatangan (Barcode/OJOL)</a>
                                             @break
 
                                             @case($penjemput->waktu_dijemput != null && $penjemput->confirm_pic_at == null)
                                                 <a href="" class="btn btn-info text-light fw-bold"><i class="ti-car"></i>
-                                                    Confirm Dijemput</a>
+                                                    Confirm Dijemput (Guru)</a>
                                             @break
 
                                             @case($penjemput->waktu_dijemput != null && $penjemput->confirm_pic_at != null)
                                                 <a href="" class="btn btn-dark fw-bold"><i class="ti-export"></i> Confirm
-                                                    Keluar</a>
+                                                    Keluar (Security)</a>
                                             @break
                                         @endswitch
 
@@ -86,7 +87,6 @@
         var picKelas = @json(Auth::user()->pic_kelas);
 
 
-        console.log('cekkkkkkk ' + picKelas);
         Pusher.logToConsole = true;
 
         // Initialize Pusher
@@ -132,9 +132,9 @@
 
 
         // Debugging line
-        pusher.connection.bind('connected', function() {
-            console.log('Pusher connected');
-        });
+        // pusher.connection.bind('connected', function() {
+        //     console.log('Pusher connected');
+        // });
 
         $(document).ready(function() {
             $('.table').DataTable();

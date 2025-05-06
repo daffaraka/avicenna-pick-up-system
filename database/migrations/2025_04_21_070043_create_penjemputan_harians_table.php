@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('siswa_id');
             $table->foreignId('pic_id');
-            $table->string('nama_penjemput');
+            $table->string('nama_penjemput')->nullable();
 
             $table->dateTime('waktu_dijemput')->nullable();
             $table->dateTime('confirm_pic_at')->nullable();

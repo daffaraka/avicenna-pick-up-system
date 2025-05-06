@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('penjemputan-harian/satpam-konfirmasi', [PenjemputanHarianController::class, 'satpamKonfirmasi'])->name('penjemputan-harian.satpamKonfirmasi');
     Route::get('penjemputan-harian/guru-konfirmasi', [PenjemputanHarianController::class, 'guruKonfirmasi'])->name('penjemputan-harian.guruKonfirmasi');
     Route::get('penjemputan-harian/{kelas}', [PenjemputanHarianController::class,'penjemputanKelas'])->name('penjemputan-harian.kelas');
-
+    Route::get('generate-harian' , [PenjemputanHarianController::class,'generateSiswaHariIni'])->name('penjemputan-harian.generateSiswaHariIni');
 
     Route::resource('siswa', SiswaController::class);
 

@@ -48,8 +48,8 @@
             "qr-reader", {
                 fps: 24,
                 qrbox: {
-                    width: 300,
-                    height: 300
+                    width: 200,
+                    height: 200,
                 },
                 rememberLastUsedCamera: true,
                 showTorchButtonIfSupported: true

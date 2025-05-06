@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>@yield('title', 'Dashboard')</title>
+    <title>@yield('title', 'Avicenna Pick Up System')</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/feather/feather.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/ti-icons/css/themify-icons.css') }}">
@@ -30,7 +30,7 @@
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
 
-    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js" type="text/javascript"></script>
+    <script src="{{asset('assets/js/html5-qrcode.min.js')}}" type="text/javascript"></script>
 
 </head>
 
@@ -70,7 +70,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script src="{{asset('assets/js/html5-qrcode.min.js')}}" type="text/javascript"></script>
+    {{-- <script src="{{asset('assets/js/html5-qrcode.min.js')}}" type="text/javascript"></script> --}}
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
     <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>

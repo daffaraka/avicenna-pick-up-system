@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Events\TestNotification;
 use App\Models\PenjemputanHarian;
 use Illuminate\Support\Facades\Auth;
+use App\Jobs\SendPenjemputanNotification;
 
 class PenjemputanHarianController extends Controller
 {
@@ -85,7 +86,7 @@ class PenjemputanHarianController extends Controller
             ->get();
 
 
-            // dd($siswaDijemput);
+        // dd($siswaDijemput);
         return view('dashboard.penjemputan-harian.penjemputan-index', compact('penjemputan', 'siswaDijemput'));
     }
 
@@ -147,15 +148,16 @@ class PenjemputanHarianController extends Controller
             ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
             ->first();
 
-        event(new TestNotification([
-            'notifikasi' => 'Penjemput atas nama ' . $penjemputan->siswa->nama . ' Sudah Datang',
-            'kelas' => $penjemputan->siswa->kelas
-        ]));
-
-
         $penjemputan->update([
             'waktu_dijemput' => Carbon::now()
         ]);
+
+
+        dispatch(new SendPenjemputanNotification($penjemputan->siswa));
+
+
+
+
         return response()->json([
             'success' => true,
             'data' => $penjemputan->siswa->nama_siswa,
@@ -188,6 +190,9 @@ class PenjemputanHarianController extends Controller
 
     public function generateSiswaHariIni()
     {
+
+
+
         $pic_kelas = Auth::user()->pic_kelas ?? array_rand(array_flip(range('1A', '3C')));
         $siswa_kelas = Siswa::where('kelas', $pic_kelas)->get();
         // $siswa = Siswa::all();
@@ -200,6 +205,8 @@ class PenjemputanHarianController extends Controller
         }
 
 
-        return response()->json(['success' => true, 'message' => 'Siswa Ditambahkan.']);
+        return redirect()->route('penjemputan-harian.index')
+            ->with('success', 'Penjemputan hari ini berhasil ditambahkan.');
+        // return response()->json(['success' => true, 'message' => 'Siswa Ditambahkan.']);
     }
 }
