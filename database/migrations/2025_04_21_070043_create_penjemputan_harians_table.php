@@ -17,6 +17,10 @@ return new class extends Migration
             $table->foreignId('pic_id');
             $table->string('nama_penjemput')->nullable();
 
+            $table->string('type_ojol')->nullable();
+            $table->string('nama_ojol')->nullable();
+            $table->string('plat_ojol')->nullable();
+
             $table->dateTime('waktu_dijemput')->nullable();
             $table->dateTime('confirm_pic_at')->nullable();
             $table->dateTime('confirm_satpam_at')->nullable();

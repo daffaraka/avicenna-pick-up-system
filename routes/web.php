@@ -43,11 +43,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('penjemputan-harian', PenjemputanHarianController::class)->except('show');
     Route::post('penjemput-datang',[PenjemputanHarianController::class,'penjemputDatang'])->name('penjemputDatang');
 
-    Route::get('penjemputan-harian/satpam-konfirmasi', [PenjemputanHarianController::class, 'satpamKonfirmasi'])->name('penjemputan-harian.satpamKonfirmasi');
-    Route::get('penjemputan-harian/guru-konfirmasi', [PenjemputanHarianController::class, 'guruKonfirmasi'])->name('penjemputan-harian.guruKonfirmasi');
+
+    Route::get('penjemputan-harian/satpam-konfirmasi-kedatangan/{penjemputan_harian}', [PenjemputanHarianController::class, 'satpamKonfirmasiKedatangan'])->name('penjemputan-harian.satpamKonfirmasiKedatangan');
+    Route::get('penjemputan-harian/satpam-konfirmasi-keluar/{penjemputan_harian}', [PenjemputanHarianController::class, 'satpamKonfirmasiKeluar'])->name('penjemputan-harian.satpamKonfirmasiKeluar');
+    Route::get('penjemputan-harian/guru-konfirmasi/{penjemputan_harian}', [PenjemputanHarianController::class, 'guruKonfirmasi'])->name('penjemputan-harian.guruKonfirmasi');
     Route::get('penjemputan-harian/{kelas}', [PenjemputanHarianController::class,'penjemputanKelas'])->name('penjemputan-harian.kelas');
     Route::get('generate-harian' , [PenjemputanHarianController::class,'generateSiswaHariIni'])->name('penjemputan-harian.generateSiswaHariIni');
-
+    Route::post('penjemputan-harian/satpam-konfirmasi-ojol/', [PenjemputanHarianController::class, 'satpamKonfirmasiOjol'])->name('penjemputan-harian.satpamKonfirmasiOjol');
+    Route::post('data-siswa/{id}', [PenjemputanHarianController::class, 'dataSiswa'])->name('penjemputan-harian.dataSiswa');
     Route::resource('siswa', SiswaController::class);
 
 });

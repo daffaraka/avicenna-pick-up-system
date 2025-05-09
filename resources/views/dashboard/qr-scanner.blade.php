@@ -2,7 +2,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <div id="qr-reader" style="width: auto; margin: 0 auto;"></div>
+            <div id="qr-reader" style="width: 50%; margin: 0 auto;"></div>
 
             <div class="mt-3">
                 <h1 class="card-title">Hasil : </h1>
@@ -48,8 +48,8 @@
             "qr-reader", {
                 fps: 24,
                 qrbox: {
-                    width: 200,
-                    height: 200,
+                    width: 400,
+                    height: 400,
                 },
                 rememberLastUsedCamera: true,
                 showTorchButtonIfSupported: true

@@ -139,14 +139,21 @@ class PenjemputanHarianController extends Controller
     }
 
 
+    // Metode scan barcode (Utama)
     public function penjemputDatang(Request $request)
     {
 
+
+
+        // dd($request->all());
         $penjemputan = PenjemputanHarian::whereHas('siswa', function ($query) use ($request) {
             $query->where('nis', $request->data);
         })
             ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
             ->first();
+
+
+
 
         $penjemputan->update([
             'waktu_dijemput' => Carbon::now()
@@ -168,8 +175,26 @@ class PenjemputanHarianController extends Controller
 
 
 
-    public function satpamKonfirmasi(PenjemputanHarian $penjemputanHarian)
+
+
+    // Jika penjemput lupa tap barcode, maka bisa menggunakan ini
+    public function satpamKonfirmasiKedatangan(PenjemputanHarian $penjemputanHarian)
     {
+        $penjemputanHarian->update([
+            'waktu_dijemput' => Carbon::now()
+        ]);
+        return redirect()->route('penjemputan-harian.index')
+            ->with('success', 'Data updated successfully.');
+    }
+
+    // Jika penjemput sudah keluar, maka memakai metode ini
+
+    public function satpamKonfirmasiKeluar(PenjemputanHarian $penjemputanHarian)
+    {
+
+        if($penjemputanHarian->waktu_dijemput == null){
+            return redirect()->route('penjemputan-harian.index')->with('error', 'Penjemput belum datang');
+        }
         $penjemputanHarian->update([
             'confirm_satpam_at' => Carbon::now()
         ]);
@@ -208,5 +233,40 @@ class PenjemputanHarianController extends Controller
         return redirect()->route('penjemputan-harian.index')
             ->with('success', 'Penjemputan hari ini berhasil ditambahkan.');
         // return response()->json(['success' => true, 'message' => 'Siswa Ditambahkan.']);
+    }
+
+
+    public function dataSiswa(Request $request)
+    {
+        $siswa = PenjemputanHarian::with('siswa')->find($request->id);
+
+
+        return response()->json([
+            'success' => true,
+            'data' => $siswa->siswa
+        ]);
+    }
+
+
+    public function satpamKonfirmasiOjol(Request $request)
+    {
+
+
+
+        $penjemputan = PenjemputanHarian::whereHas('siswa', function ($query) use ($request) {
+            $query->where('nis', $request->nis);
+        })
+            ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
+            ->first();
+            // dd($penjemputan);
+
+        if($request->has('ojol')){
+            $penjemputan->update([
+                'waktu_dijemput' => Carbon::now(),
+                'type_ojol' => $request->type_ojol,
+                'nama_ojol' => $request->nama_ojol,
+                'plat_ojol' => $request->plat_ojol,
+            ]);
+        }
     }
 }
