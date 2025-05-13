@@ -146,6 +146,9 @@ class PenjemputanHarianController extends Controller
 
 
         // dd($request->all());
+
+
+
         $penjemputan = PenjemputanHarian::whereHas('siswa', function ($query) use ($request) {
             $query->where('nis', $request->data);
         })
@@ -154,23 +157,49 @@ class PenjemputanHarianController extends Controller
 
 
 
-
-        $penjemputan->update([
-            'waktu_dijemput' => Carbon::now()
-        ]);
-
-
-        dispatch(new SendPenjemputanNotification($penjemputan->siswa));
+        if ($penjemputan) {
+            $penjemputan->update([
+                'waktu_dijemput' => Carbon::now()
+            ]);
 
 
+            dispatch(new SendPenjemputanNotification($penjemputan->siswa));
 
 
-        return response()->json([
-            'success' => true,
-            'data' => $penjemputan->siswa->nama_siswa,
-            'kelas' => $penjemputan->siswa->kelas,
-            'time' => Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y')
-        ]);
+
+
+            return response()->json([
+                'success' => true,
+                'data' => $penjemputan->siswa->nama_siswa,
+                'kelas' => $penjemputan->siswa->kelas,
+                'time' => Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y')
+            ]);
+        } else {
+
+
+            return response()->json([
+                'success' => true,
+                'data' => $request->data,
+                'time' => Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y')
+            ]);
+        }
+
+        // $penjemputan->update([
+        //     'waktu_dijemput' => Carbon::now()
+        // ]);
+
+
+        // dispatch(new SendPenjemputanNotification($penjemputan->siswa));
+
+
+
+
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $penjemputan->siswa->nama_siswa,
+        //     'kelas' => $penjemputan->siswa->kelas,
+        //     'time' => Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y')
+        // ]);
     }
 
 
@@ -192,7 +221,7 @@ class PenjemputanHarianController extends Controller
     public function satpamKonfirmasiKeluar(PenjemputanHarian $penjemputanHarian)
     {
 
-        if($penjemputanHarian->waktu_dijemput == null){
+        if ($penjemputanHarian->waktu_dijemput == null) {
             return redirect()->route('penjemputan-harian.index')->with('error', 'Penjemput belum datang');
         }
         $penjemputanHarian->update([
@@ -258,9 +287,9 @@ class PenjemputanHarianController extends Controller
         })
             ->whereDate('created_at', Carbon::now()->format('Y-m-d'))
             ->first();
-            // dd($penjemputan);
+        // dd($penjemputan);
 
-        if($request->has('ojol')){
+        if ($request->has('ojol')) {
             $penjemputan->update([
                 'waktu_dijemput' => Carbon::now(),
                 'type_ojol' => $request->type_ojol,
