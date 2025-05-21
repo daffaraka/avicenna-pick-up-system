@@ -29,15 +29,29 @@
                             <th>Siswa</th>
                             <th>Kelas</th>
                             {{-- <th>Nama Penjemput</th> --}}
-                            <th>Jam Penjemput Datang</th>
-                            <th>Confirm Wali Kelas At</th>
-                            <th>Confirm Satpam At</th>
+                            <th>Jam Penjemput <br> Datang</th>
+                            <th>Confirm Wali <br> Kelas At</th>
+                            <th>Confirm <br> Satpam At</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($penjemputan as $penjemput)
-                            <tr>
+                            <tr class="@switch($penjemput)
+                                @case($penjemput->waktu_dijemput == null)
+                                    bg-warning
+                                @break
+                                @case($penjemput->waktu_dijemput != null && $penjemput->confirm_pic_at == null)
+                                    bg-info
+                                @break
+                                @case($penjemput->waktu_dijemput != null && $penjemput->confirm_pic_at != null && $penjemput->confirm_satpam_at == null)
+                                    bg-dark
+                                @break
+                                @case($penjemput->waktu_dijemput != null && $penjemput->confirm_pic_at != null && $penjemput->confirm_satpam_at != null)
+                                    bg-success
+                                @break
+                            @endswitch">
+
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $penjemput->siswa->nama_siswa }}</td>
                                 <td>{{ $penjemput->siswa->kelas }}</td>

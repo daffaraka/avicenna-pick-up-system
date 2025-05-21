@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\SiswaImport;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SiswaController extends Controller
@@ -11,7 +14,11 @@ class SiswaController extends Controller
 
     public function index()
     {
-        $siswas = Siswa::all();
+        if (Auth::user()->role != 'admin') {
+            $siswas = Siswa::whereKelas(Auth::user()->pic_kelas)->get();
+        } else {
+            $siswas = Siswa::all();
+        }
         return view('dashboard.siswa.siswa-index', compact('siswas'));
     }
 
@@ -42,12 +49,12 @@ class SiswaController extends Controller
         // ]);
 
         // $data = $siswa->nis;
-        $name = $siswa->nis;
+        $name = $siswa->nis . '-' . $siswa->nama_siswa;
 
 
         return response()->streamDownload(function () use ($name) {
-            echo file_get_contents('https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='.$name);
-        }, $name.'.png');
+            echo file_get_contents('https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . $name);
+        }, $name . '.png');
 
         // dd($base64Svg);
         // return view('dashboard.qrcode', compact('base64Svg'));
@@ -108,5 +115,21 @@ class SiswaController extends Controller
         $siswa->delete();
 
         return redirect()->route('siswa.index');
+    }
+
+
+    public function import(Request $request)
+    {
+
+
+        // dd($request->all());
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv',
+        ]);
+
+        Excel::import(new SiswaImport, $request->file('file'));
+
+
+        return redirect()->back()->with('success', 'All good!');
     }
 }

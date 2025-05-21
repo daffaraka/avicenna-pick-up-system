@@ -245,8 +245,6 @@ class PenjemputanHarianController extends Controller
     public function generateSiswaHariIni()
     {
 
-
-
         $pic_kelas = Auth::user()->pic_kelas ?? array_rand(array_flip(range('1A', '3C')));
         $siswa_kelas = Siswa::where('kelas', $pic_kelas)->get();
         // $siswa = Siswa::all();

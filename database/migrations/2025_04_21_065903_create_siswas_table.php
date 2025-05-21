@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('siswas', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('nis');
             $table->string('nama_siswa');
             $table->string('kelas');
+            $table->bigInteger('nis');
+            $table->bigInteger('nisn');
+            $table->string('alamat');
+            $table->string('nama_ayah');
+            $table->string('nama_ibu');
+
             $table->string('foto')->nullable();
             $table->timestamps();
         });

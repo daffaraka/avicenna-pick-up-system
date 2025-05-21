@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::post('penjemputan-harian/satpam-konfirmasi-ojol/', [PenjemputanHarianController::class, 'satpamKonfirmasiOjol'])->name('penjemputan-harian.satpamKonfirmasiOjol');
     Route::post('data-siswa/{id}', [PenjemputanHarianController::class, 'dataSiswa'])->name('penjemputan-harian.dataSiswa');
     Route::resource('siswa', SiswaController::class);
+    Route::post('import-siswa', [SiswaController::class, 'import'])->name('siswa.import');
 
 });
 
