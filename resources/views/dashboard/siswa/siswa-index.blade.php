@@ -71,13 +71,3 @@
 
 @endsection
 
-
-@push('scripts')
-    <script>
-        $(document).ready(function() {
-            $('.table').DataTable({
-                "pageLength": 25
-            });
-        });
-    </script>
-@endpush

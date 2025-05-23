@@ -8,6 +8,13 @@
                 <div class="card-body">
                     <h4 class="card-title">Dashboard</h4>
                     <h6 class="card-subtitle">Selamat datang di halaman dashboard</h6>
+                    <div class="my-3 mt-4">
+                        <div class="btn btn-primary">
+                            <h1 class="fw-bold mb-0 text-white">90</h1>
+                        </div>
+
+                        <p class="fw-bold mt-2">Jumlah Siswa akan dijemput hari ini</p>
+                    </div>
                 </div>
             </div>
         </div>

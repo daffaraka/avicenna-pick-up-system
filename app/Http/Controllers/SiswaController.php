@@ -26,6 +26,13 @@ class SiswaController extends Controller
 
     public function generateQrCode(Siswa $siswa)
     {
+
+        $name = $siswa->nis;
+
+
+        return response()->streamDownload(function () use ($name) {
+            echo file_get_contents('https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . $name);
+        }, $siswa->nis . '-' . $siswa->nama_siswa . '-' . $siswa->kelas . '.png');
         // $qrCodes = [];
         // $svg =
         // QrCode::format('svg')->size(200)->generate('https://contoh.com');
@@ -49,12 +56,7 @@ class SiswaController extends Controller
         // ]);
 
         // $data = $siswa->nis;
-        $name = $siswa->nis . '-' . $siswa->nama_siswa;
 
-
-        return response()->streamDownload(function () use ($name) {
-            echo file_get_contents('https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' . $name);
-        }, $name . '.png');
 
         // dd($base64Svg);
         // return view('dashboard.qrcode', compact('base64Svg'));

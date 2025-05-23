@@ -13,9 +13,11 @@ use App\Jobs\SendPenjemputanNotification;
 class PenjemputanHarianController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
 
+        if ($request->has('search')) {
+        }
 
         if (Auth::user()->role == 'admin' || Auth::user()->role == 'satpam') {
             $siswaDijemput = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
@@ -23,6 +25,8 @@ class PenjemputanHarianController extends Controller
                 ->get()
                 ->groupBy('siswa.kelas')
                 ->sortKeys();
+
+
             $penjemputan = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
                 ->with('siswa')
                 ->orderBy('waktu_dijemput', 'desc')
@@ -61,6 +65,9 @@ class PenjemputanHarianController extends Controller
         //     ->with('siswa')
         //     ->orderBy('waktu_dijemput', 'desc')
         //     ->get();
+
+
+        // dd($penjemputan);
         return view('dashboard.penjemputan-harian.penjemputan-index', compact('penjemputan', 'siswaDijemput'));
     }
 
@@ -143,12 +150,6 @@ class PenjemputanHarianController extends Controller
     public function penjemputDatang(Request $request)
     {
 
-
-
-        // dd($request->all());
-
-
-
         $penjemputan = PenjemputanHarian::whereHas('siswa', function ($query) use ($request) {
             $query->where('nis', $request->data);
         })
@@ -164,9 +165,6 @@ class PenjemputanHarianController extends Controller
 
 
             dispatch(new SendPenjemputanNotification($penjemputan->siswa));
-
-
-
 
             return response()->json([
                 'success' => true,
@@ -212,8 +210,12 @@ class PenjemputanHarianController extends Controller
         $penjemputanHarian->update([
             'waktu_dijemput' => Carbon::now()
         ]);
+
+        dispatch(new SendPenjemputanNotification($penjemputanHarian->siswa));
+
+        //
         return redirect()->route('penjemputan-harian.index')
-            ->with('success', 'Data updated successfully.');
+            ->with('success', 'Satpam telah mengkonfirmasi.');
     }
 
     // Jika penjemput sudah keluar, maka memakai metode ini
@@ -227,8 +229,11 @@ class PenjemputanHarianController extends Controller
         $penjemputanHarian->update([
             'confirm_satpam_at' => Carbon::now()
         ]);
+
+        dispatch(new SendPenjemputanNotification($penjemputanHarian->siswa));
+
         return redirect()->route('penjemputan-harian.index')
-            ->with('success', 'Data updated successfully.');
+            ->with('success', 'Atas nama ' + $penjemputanHarian->siswa->nama_siswa. ' sudah dikonfirmasi keluar oleh Admin.');
     }
 
 
@@ -237,28 +242,46 @@ class PenjemputanHarianController extends Controller
         $penjemputanHarian->update([
             'confirm_pic_at' => Carbon::now()
         ]);
+
+        dispatch(new SendPenjemputanNotification($penjemputanHarian->siswa));
+
         return redirect()->route('penjemputan-harian.index')
-            ->with('success', 'Data updated successfully.');
+            ->with('success', 'Guru sudah konfirmasi atas nama ' + $penjemputanHarian->siswa->nama_siswa);
     }
 
 
     public function generateSiswaHariIni()
     {
 
-        $pic_kelas = Auth::user()->pic_kelas ?? array_rand(array_flip(range('1A', '3C')));
-        $siswa_kelas = Siswa::where('kelas', $pic_kelas)->get();
-        // $siswa = Siswa::all();
+        // $pic_kelas = Auth::user()->pic_kelas ?? array_rand(array_flip(range('1A', '3C')));
 
-        foreach ($siswa_kelas as $siswa) {
-            PenjemputanHarian::create([
-                'pic_id' => $pic_kelas,
-                'siswa_id' => $siswa->id,
-            ]);
+        try {
+            if (Auth::user()->role != 'admin' && Auth::user()->role != 'satpam') {
+                $siswa_kelas = Siswa::where('kelas', Auth::user()->pic_kelas)->get();
+                foreach ($siswa_kelas as $siswa) {
+                    PenjemputanHarian::create([
+                        'pic_id' => Auth::user()->id,
+                        'siswa_id' => $siswa->id,
+                    ]);
+                }
+            } else {
+
+                $siswa_kelas = Siswa::all();
+
+                for ($i = 0; $i < count($siswa_kelas); $i++) {
+                    PenjemputanHarian::create([
+                        'pic_id' => Auth::user()->id,
+                        'siswa_id' => $siswa_kelas[$i]->id,
+                    ]);
+                }
+            }
+
+            return redirect()->route('penjemputan-harian.index')
+                ->with('success', 'Penjemputan hari ini berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            return redirect()->route('penjemputan-harian.index')
+                ->with('error', 'Gagal menambahkan penjemputan. Silakan coba lagi.');
         }
-
-
-        return redirect()->route('penjemputan-harian.index')
-            ->with('success', 'Penjemputan hari ini berhasil ditambahkan.');
         // return response()->json(['success' => true, 'message' => 'Siswa Ditambahkan.']);
     }
 
@@ -294,6 +317,56 @@ class PenjemputanHarianController extends Controller
                 'nama_ojol' => $request->nama_ojol,
                 'plat_ojol' => $request->plat_ojol,
             ]);
+        }
+
+
+        dispatch(new SendPenjemputanNotification($penjemputan->siswa));
+
+        //
+        return redirect()->route('penjemputan-harian.index')
+            ->with('success', 'Satpam telah mengkonfirmasi.');
+    }
+
+
+    public function refreshTablePenjemputan(Request $request)
+    {
+        // dd();
+        if ($request->ajax()) {
+            if (Auth::user()->role == 'admin' || Auth::user()->role == 'satpam') {
+                $penjemputan = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
+                    ->with('siswa')
+                    ->orderBy('waktu_dijemput', 'desc')
+                    ->get();
+            } else {
+                $penjemputan = PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))
+                    ->with('siswa')
+                    ->whereHas('siswa', function ($siswa) {
+                        $siswa->where('kelas', Auth::user()->pic_kelas);
+                    })
+                    ->orderBy('waktu_dijemput', 'desc')
+                    ->get();
+            }
+
+            return response()->json(['data' => $penjemputan, 'status' => 'success']);
+        } else {
+            return response()->json(['status' => 'no ajax']);
+        }
+    }
+
+
+
+
+
+    public function nullPenjemputan()
+    {
+        try {
+            PenjemputanHarian::whereDate('created_at', Carbon::now()->format('Y-m-d'))->update([
+                'waktu_dijemput' => null
+            ]);
+
+            return redirect()->back()->with('success', 'Penjemputan berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('success', 'Penjemputan gagal dihapus.');
         }
     }
 }

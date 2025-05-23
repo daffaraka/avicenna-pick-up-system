@@ -20,11 +20,11 @@ class SiswaImport implements ToModel, WithHeadingRow
         return new Siswa([
             'nis' => $row['nis'],
             'nisn' => $row['nisn'],
-            'nama_siswa' => $row['nama_siswa'],
-            'nama_ayah' => $row['nama_ayah'],
-            'nama_ibu' => $row['nama_ibu'],
-            'alamat' => $row['alamat'],
-            'kelas' => $row['kelas'],
+            'nama_siswa' => $row['nama_siswa'] ?? '-',
+            'nama_ayah' => $row['nama_ayah'] ?? '-',
+            'nama_ibu' => $row['nama_ibu'] ?? '-',
+            'alamat' => $row['alamat'] ?? '-',
+            'kelas' => $row['kelas'] ?? '-',
         ]);
     }
 }

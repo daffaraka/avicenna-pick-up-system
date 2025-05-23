@@ -8,11 +8,22 @@
         </div>
         <div class="card-body">
 
-            <div class="d-flex justify-content-between px-3">
+            <div class="d-xl-flex justify-content-between px-3">
                 <div class="h3">Data siswa dijemput kelas {{ Auth::user()->pic_kelas }}</div>
 
-                <a href="{{ route('penjemputan-harian.generateSiswaHariIni') }}"
-                    class="btn btn-info fw-bold text-white">Generate Hari Ini</a>
+
+
+                <div class="d-flex my-lg-2 gap-2">
+                    @env('local')
+                    <a href="{{ route('penjemputan-harian.nullPenjemputan') }}" class="btn btn-danger fw-bold text-white"
+                        id="btnNullPenjemputan">Null
+                        Penjemputan</a>
+                    @endenv
+
+                    <a href="{{ route('penjemputan-harian.generateSiswaHariIni') }}"
+                        class="btn btn-info fw-bold text-white">Generate Hari Ini</a>
+                </div>
+
             </div>
             <div class="d-flex gap-2 mb-3 px-3">
 
@@ -22,7 +33,7 @@
                 @endforeach --}}
             </div>
             <div class="table-responsive px-3">
-                <table id="example1" class="table table-bordered table-striped">
+                <table id="penjemputan-table" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -37,7 +48,8 @@
                     </thead>
                     <tbody>
                         @foreach ($penjemputan as $penjemput)
-                            <tr class="@switch($penjemput)
+                            <tr
+                                class="@switch($penjemput)
                                 @case($penjemput->waktu_dijemput == null)
                                     bg-warning
                                 @break
@@ -53,8 +65,8 @@
                             @endswitch">
 
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $penjemput->siswa->nama_siswa }}</td>
-                                <td>{{ $penjemput->siswa->kelas }}</td>
+                                <td>{{ $penjemput->siswa->nama_siswa ?? '-' }}</td>
+                                <td>{{ $penjemput->siswa->kelas ?? '-' }}</td>
                                 {{-- <td>{{ $penjemput->nama_penjemput }}</td> --}}
                                 <td>{{ $penjemput->waktu_dijemput ? \Carbon\Carbon::parse($penjemput->waktu_dijemput)->isoFormat('H:mm') : '-' }}
                                 </td>
@@ -70,22 +82,29 @@
                                     <div class="d-flex gap-2">
                                         @switch($penjemput)
                                             @case($penjemput->waktu_dijemput == null)
-                                                <div class="dropdown">
-                                                    <button class="btn btn-primary fw-bold dropdown-toggle" type="button"
-                                                        id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        <i class="ti-user"></i> Konfirmasi Kedatangan
-                                                    </button>
-                                                    <div class="dropdown-menu w-100 bg-light" aria-labelledby="dropdownMenuButton">
-                                                        <a href="{{ route('penjemputan-harian.satpamKonfirmasiKedatangan', $penjemput->id) }}"
-                                                            class="dropdown-item fw-bold py-3" href="#">Konfirmasi
-                                                            Sekarang</a>
-                                                        <button type="button" data-id="{{ $penjemput->id }}" data-bs-toggle="modal"
-                                                            data-bs-target="#staticBackdrop"
-                                                            class="dropdown-item fw-bold py-3 penjemputanButton"
-                                                            href="#">OJOL</button>
+                                                @if (Auth::user()->role == 'satpam' || Auth::user()->role == 'admin')
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-primary fw-bold dropdown-toggle" type="button"
+                                                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
+                                                            <i class="ti-user"></i> Konfirmasi Kedatangan
+                                                        </button>
+                                                        <div class="dropdown-menu w-100 bg-light"
+                                                            aria-labelledby="dropdownMenuButton">
+                                                            <a href="{{ route('penjemputan-harian.satpamKonfirmasiKedatangan', $penjemput->id) }}"
+                                                                class="dropdown-item fw-bold py-3" href="#">Konfirmasi
+                                                                Sekarang</a>
+                                                            <button type="button" data-id="{{ $penjemput->id }}"
+                                                                data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                                                                class="dropdown-item fw-bold py-3 penjemputanButton"
+                                                                href="#">Penjemput Lain</button>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                @else
+                                                    <a href="#" class="btn btn-warning fw-bold disabled"><i
+                                                            class="ti-alert"></i> Satpam Belum
+                                                        Konfirmasi</a>
+                                                @endif
                                             @break
 
                                             @case($penjemput->waktu_dijemput != null && $penjemput->confirm_pic_at == null)
@@ -95,12 +114,19 @@
                                             @break
 
                                             @case($penjemput->waktu_dijemput != null && $penjemput->confirm_pic_at != null && $penjemput->confirm_satpam_at == null)
-                                                <a href="{{ route('penjemputan-harian.satpamKonfirmasiKeluar', $penjemput->id) }}"
-                                                    class="btn btn-dark fw-bold"><i class="ti-export"></i> Konfirmasi
-                                                    Keluar (Security)</a>
+                                                @if (Auth::user()->role == 'satpam' || Auth::user()->role == 'admin')
+                                                    <a href="{{ route('penjemputan-harian.satpamKonfirmasiKeluar', $penjemput->id) }}"
+                                                        class="btn btn-dark fw-bold"><i class="ti-export"></i> Siswa Sudah
+                                                        Keluar Area(Security)</a>
+                                                @else
+                                                    <a href="#" class="btn btn-warning fw-bold disabled"><i
+                                                            class="ti-alert"></i> Satpam Belum Dikonfirmasi Keluar</a>
+                                                @endif
                                             @break
+
                                             @case($penjemput->waktu_dijemput != null && $penjemput->confirm_pic_at != null && $penjemput->confirm_satpam_at != null)
-                                                <a href="#" class="btn btn-success fw-bold"><i class="ti-check-box"></i> Siswa
+                                                <a href="#" class="btn btn-success fw-bold disabled"><i
+                                                        class="ti-check-box"></i> Siswa
                                                     Sudah Pulang</a>
                                             @break
                                         @endswitch
@@ -145,17 +171,20 @@
                             <input type="text" class="form-control" id="kelas" name="kelas" disabled>
                         </div>
                         <div class="mb-3">
-                            <label for="type_ojol" class="form-label">Type Ojol</label>
+                            <label for="type_ojol" class="form-label">Pilih Penjemput</label>
                             <select class="form-select text-dark" id="type_ojol" name="type_ojol" required>
                                 <option value="">Pilih</option>
-                                <option value="go-ride">Go-ride</option>
+                                <option value="Kerabat&Keluarga">Kerabat/Keluarga</option>
+                                <option value="Ojol">Ojek Online</option>
+                                <option value="Taxi Online">Taxi Online </option>
+                                {{-- <option value="go-ride">Go-ride</option>
                                 <option value="go-car">Go-car</option>
                                 <option value="grab-bike">Grab-bike</option>
                                 <option value="grab-car">Grab-car</option>
-                                <option value="maxim">Maxim</option>
+                                <option value="maxim">Maxim</option> --}}
                             </select>
                         </div>
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label for="nama_penjemput" class="form-label">Nama Ojol Penjemput</label>
                             <input type="text" class="form-control" id="nama_penjemput" name="nama_penjemput"
                                 required>
@@ -163,7 +192,7 @@
                         <div class="mb-3">
                             <label for="plat_nomor" class="form-label">Plat Nomor</label>
                             <input type="text" class="form-control" id="plat_nomor" name="plat_nomor" required>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -178,7 +207,109 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+
     <script>
+        // Auto-refresh setiap 5 detik
+        setInterval(refreshPenjemputanTable, 5000);
+
+
+        function refreshPenjemputanTable() {
+            let userRole = document.querySelector('meta[name="user-role"]').content;
+            console.log('meta user role : ' + userRole);
+
+            $.ajax({
+                url: "{{ route('penjemputan-harian.refreshTablePenjemputan') }}",
+                type: "get",
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $('#penjemputan-table').DataTable().destroy();
+                        $('#penjemputan-table tbody').empty();
+
+                        const data = response.data;
+
+                        data.forEach((penjemput, index) => {
+                            let rowClass = '';
+                            if (!penjemput.waktu_dijemput) {
+                                rowClass = 'bg-warning';
+                            } else if (penjemput.waktu_dijemput && !penjemput
+                                .confirm_pic_at) {
+                                rowClass = 'bg-info';
+                            } else if (penjemput.waktu_dijemput && penjemput
+                                .confirm_pic_at && !penjemput.confirm_satpam_at) {
+                                rowClass = 'bg-dark';
+                            } else if (penjemput.waktu_dijemput && penjemput
+                                .confirm_pic_at && penjemput.confirm_satpam_at) {
+                                rowClass = 'bg-success';
+                            }
+
+                            const formatJam = waktu => waktu ? dayjs(waktu).format(
+                                'HH:mm') : '-';
+
+                            let aksiHTML = '';
+
+                            if (!penjemput.waktu_dijemput) {
+                                if (userRole === 'satpam' || userRole === 'admin') {
+                                    aksiHTML = `
+            <div class="dropdown">
+                <button class="btn btn-primary fw-bold dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="ti-user"></i> Konfirmasi Kedatangan
+                </button>
+                <div class="dropdown-menu w-100 bg-light">
+                    <a href="/penjemputan-harian/satpam-konfirmasi-kedatangan/${penjemput.id}" class="dropdown-item fw-bold py-3">Konfirmasi Sekarang</a>
+                    <button type="button" data-id="${penjemput.id}" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="dropdown-item fw-bold py-3 penjemputanButton">Penjemput Lain</button>
+                </div>
+            </div>`;
+                                } else {
+                                    aksiHTML =
+                                        `<a href="#" class="btn btn-warning fw-bold disabled"><i class="ti-alert"></i> Satpam Belum Konfirmasi</a>`;
+                                }
+
+                            } else if (penjemput.waktu_dijemput && !penjemput.confirm_pic_at) {
+                                aksiHTML = `<a href="/penjemputan-harian/guru-konfirmasi/${penjemput.id}" class="btn btn-info text-light fw-bold">
+                    <i class="ti-car"></i> Konfirmasi Dijemput (Guru)
+                </a>`;
+
+                            } else if (penjemput.waktu_dijemput && penjemput.confirm_pic_at && !
+                                penjemput.confirm_satpam_at) {
+                                if (userRole === 'satpam' || userRole === 'admin') {
+                                    aksiHTML = `<a href="/penjemputan-harian/satpam-konfirmasi-keluar/${penjemput.id}" class="btn btn-dark fw-bold">
+                        <i class="ti-export"></i> Siswa Sudah Keluar Area(Security)
+                    </a>`;
+                                } else {
+                                    aksiHTML =
+                                        `<a href="#" class="btn btn-warning fw-bold disabled"><i class="ti-alert"></i> Satpam Belum Dikonfirmasi Keluar</a>`;
+                                }
+
+                            } else if (penjemput.waktu_dijemput && penjemput.confirm_pic_at && penjemput
+                                .confirm_satpam_at) {
+                                aksiHTML = `<a href="#" class="btn btn-success fw-bold disabled">
+                    <i class="ti-check-box"></i> Siswa Sudah Pulang
+                </a>`;
+                            }
+
+                            const rowHTML = `
+                                <tr class="${rowClass}">
+                                    <td>${index + 1}</td>
+                                    <td>${penjemput.siswa?.nama_siswa ?? '-'}</td>
+                                    <td>${penjemput.siswa?.kelas ?? '-'}</td>
+                                    <td>${formatJam(penjemput.waktu_dijemput)}</td>
+                                    <td>${formatJam(penjemput.confirm_pic_at)}</td>
+                                    <td>${formatJam(penjemput.confirm_satpam_at)}</td>
+                                    <td><div class="d-flex gap-2">${aksiHTML}</div></td>
+                                </tr>
+                            `;
+
+                            $('#penjemputan-table tbody').append(rowHTML);
+                        });
+
+                        $('#penjemputan-table').DataTable();
+                    }
+                }
+            });
+        }
+
         var picKelas = @json(Auth::user()->pic_kelas);
 
 
@@ -200,6 +331,7 @@
             console.log('picKelas user : ' + picKelas);
 
             if (data && data.kelas === picKelas) {
+
                 swal({
                     title: 'Penjemputan Terbaru',
                     content: $('<div>')
@@ -220,6 +352,17 @@
                         `<button class="btn btn-primary">${post.nama_siswa}</button>`
                     );
                 });
+
+                // $('#penjemputan-table').DataTable().ajax.reload();
+
+
+
+                // Jalankan saat halaman dimuat
+                refreshPenjemputanTable();
+
+                // Auto-refresh setiap 5 detik
+                setInterval(refreshPenjemputanTable, 5000);
+
             } else {
                 console.log('Bukan kelas saya, alert tidak ditampilkan.');
             }
@@ -253,6 +396,20 @@
             });
 
             $('.table').DataTable();
+        });
+
+
+
+        $('#btnNullPenjemputan').click(function() {
+            $.ajax({
+                url: "{{ route('penjemputan-harian.nullPenjemputan') }}",
+                type: 'GET',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                }
+            }).done(function(response) {
+                console.log(response);
+            });
         });
     </script>
 @endpush

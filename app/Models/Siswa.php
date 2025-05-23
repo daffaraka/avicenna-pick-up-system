@@ -23,7 +23,4 @@ class Siswa extends Model
     {
         return $this->hasMany(PenjemputanHarian::class);
     }
-
-
-
 }

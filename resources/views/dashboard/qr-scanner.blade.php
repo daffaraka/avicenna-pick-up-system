@@ -22,6 +22,7 @@
 @push('scripts')
     <script>
         var x = document.getElementById("myAudio");
+        x.volume = 0.01;
 
         function playAudio() {
             x.play();

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ asset('assets/vendors/css/vendor.bundle.base.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendors/mdi/css/materialdesignicons.min.css') }}">
+    <meta name="user-role" content="{{ Auth::user()->role }}">
 
     <!-- endinject -->
     <!-- Plugin css for this page -->
@@ -30,7 +31,7 @@
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" />
 
-    <script src="{{asset('assets/js/html5-qrcode.min.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/html5-qrcode.min.js') }}" type="text/javascript"></script>
 
 </head>
 
@@ -46,6 +47,29 @@
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
+                    @if (session()->has('success'))
+                        <div class="alert alert-success">
+                            {{ session()->get('success') }}
+                        </div>
+                    @endif
+
+                    @if (session()->has('error'))
+                        <div class="alert alert-danger">
+                            {{ session()->get('error') }}
+                        </div>
+                    @endif
+
+                    @if (session()->has('warning'))
+                        <div class="alert alert-warning">
+                            {{ session()->get('warning') }}
+                        </div>
+                    @endif
+
+                    @if (session()->has('info'))
+                        <div class="alert alert-info">
+                            {{ session()->get('info') }}
+                        </div>
+                    @endif
                     @yield('content')
                 </div>
                 <!-- content-wrapper ends -->
@@ -70,7 +94,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script src="{{asset('assets/js/html5-qrcode.min.js')}}" type="text/javascript"></script>
+    <script src="{{ asset('assets/js/html5-qrcode.min.js') }}" type="text/javascript"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
     <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>
@@ -93,7 +117,6 @@
     <!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
     <!-- End custom js for this page-->
     <script>
-
         $(document).ready(function() {
             $('.table').DataTable({});
         });

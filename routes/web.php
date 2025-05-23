@@ -54,6 +54,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('siswa', SiswaController::class);
     Route::post('import-siswa', [SiswaController::class, 'import'])->name('siswa.import');
 
+
+    // Ajax Reload
+    Route::get('reload-penjemputan', [PenjemputanHarianController::class, 'refreshTablePenjemputan'])->name('penjemputan-harian.refreshTablePenjemputan');
+    Route::get('null-penjemputan', [PenjemputanHarianController::class, 'nullPenjemputan'])->name('penjemputan-harian.nullPenjemputan');
 });
 
 
